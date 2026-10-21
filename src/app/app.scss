@@ -10,7 +10,7 @@
 
 /* ================= HEADER ================= */
 .aura-header {
-  background: rgba(11, 17, 30, 0.88);
+  background: rgba(11, 17, 30, 0.92);
   border-bottom: 1px solid var(--stroke-subtle);
   backdrop-filter: blur(20px);
   position: sticky;
@@ -48,6 +48,7 @@
   justify-content: center;
   transition: transform 0.25s var(--ease-spring);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 
   &:hover {
     transform: scale(1.05);
@@ -65,6 +66,7 @@
   display: flex;
   align-items: center;
   gap: 0.55rem;
+  flex-wrap: wrap;
 }
 
 .brand-name {
@@ -107,6 +109,7 @@
   display: flex;
   align-items: center;
   gap: 0.85rem;
+  flex-wrap: wrap;
 }
 
 .search-box {
@@ -140,7 +143,7 @@
   &:focus {
     border-color: var(--aura-red);
     box-shadow: 0 0 14px rgba(225, 29, 72, 0.3);
-    width: 320px;
+    width: 300px;
     background: #172740;
   }
 }
@@ -166,6 +169,7 @@
   font-weight: 700;
   font-size: 0.78rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 }
 .user-info {
   display: flex;
@@ -183,9 +187,11 @@
 
 /* ================= NAV TABS ================= */
 .aura-nav {
-  background: rgba(8, 14, 25, 0.7);
+  background: rgba(8, 14, 25, 0.75);
   border-bottom: 1px solid var(--stroke-subtle);
   backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
 }
 .nav-container {
   max-width: 1600px;
@@ -194,6 +200,11 @@
   display: flex;
   gap: 0.5rem;
   overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
 }
 .nav-tab {
   display: flex;
@@ -212,6 +223,7 @@
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 
   &:hover {
     color: var(--txt-pure);
@@ -299,7 +311,7 @@
 
   &.red { 
     background: var(--aura-red-subtle); 
-    color: #FB7185;
+    color: #FB7185; 
     border-color: var(--aura-red-border);
   }
   &.blue { 
@@ -376,9 +388,11 @@
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.55rem;
   transition: all 0.2s var(--ease-spring);
   box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
+  white-space: nowrap;
 
   &:hover {
     transform: translateY(-2px);
@@ -397,8 +411,10 @@
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   transition: all 0.2s ease;
+  white-space: nowrap;
 
   &:hover {
     background: rgba(255, 255, 255, 0.1);
@@ -453,12 +469,14 @@
 .table-responsive {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .aura-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.86rem;
   text-align: left;
+  min-width: 780px; /* Evita compresión severa en móviles permitiendo scroll suave */
 
   th {
     background: #0B1220;
@@ -469,6 +487,7 @@
     letter-spacing: 0.06em;
     padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--stroke-medium);
+    white-space: nowrap;
   }
 
   td {
@@ -529,6 +548,7 @@
   font-weight: 600;
   color: var(--txt-pure);
   font-size: 0.9rem;
+  word-break: break-word;
 }
 .doc-info-sub {
   font-size: 0.74rem;
@@ -537,6 +557,7 @@
   gap: 0.5rem;
   align-items: center;
   margin-top: 3px;
+  flex-wrap: wrap;
 }
 
 /* Category Badge */
@@ -547,6 +568,7 @@
   border-radius: var(--radius-xs);
   font-size: 0.74rem;
   font-weight: 600;
+  white-space: nowrap;
 
   &.laborales { 
     background: rgba(6, 182, 212, 0.12); 
@@ -569,6 +591,7 @@
   border-radius: var(--radius-full);
   font-size: 0.74rem;
   font-weight: 600;
+  white-space: nowrap;
 
   &.vencido { 
     background: var(--badge-rose-bg); 
@@ -603,6 +626,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 
   &.confidencial { 
     background: rgba(225, 29, 72, 0.14); 
@@ -633,11 +657,12 @@
   }
 }
 
-/* Action Buttons inside Table (LOS BOTONES DE LA FOTO DEL USUARIO) */
+/* Action Buttons inside Table */
 .action-btns {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  white-space: nowrap;
 }
 
 .action-btn-item {
@@ -653,13 +678,13 @@
   cursor: pointer;
   transition: all 0.2s var(--ease-spring);
   position: relative;
+  flex-shrink: 0;
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   }
 
-  /* Diferenciación visual de cada opción */
   &.btn-history:hover {
     background: rgba(99, 102, 241, 0.2);
     color: #A5B4FC;
@@ -701,7 +726,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  padding: 1rem;
 }
 .modal-container {
   background: #10192A;
@@ -712,17 +737,17 @@
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
-  max-height: 90vh;
+  max-height: 92vh;
 }
 .modal-header {
-  padding: 1.25rem 1.6rem;
+  padding: 1.15rem 1.4rem;
   border-bottom: 1px solid var(--stroke-subtle);
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   h3 {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -746,14 +771,14 @@
   }
 }
 .modal-body {
-  padding: 1.6rem;
+  padding: 1.35rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 1.15rem;
 }
 .modal-footer {
-  padding: 1.1rem 1.6rem;
+  padding: 1rem 1.4rem;
   border-top: 1px solid var(--stroke-subtle);
   display: flex;
   justify-content: flex-end;
@@ -790,6 +815,7 @@
   outline: none;
   font-family: inherit;
   transition: all 0.2s ease;
+  width: 100%;
 
   &:focus {
     border-color: var(--aura-red);
@@ -801,7 +827,7 @@
 .dropzone {
   border: 2px dashed rgba(255, 255, 255, 0.18);
   border-radius: var(--radius-md);
-  padding: 1.85rem 1.25rem;
+  padding: 1.5rem 1.25rem;
   text-align: center;
   background: rgba(20, 33, 54, 0.5);
   cursor: pointer;
@@ -839,7 +865,8 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  min-width: 320px;
+  min-width: 290px;
+  max-width: 90vw;
   border-top: 1px solid var(--stroke-subtle);
   border-right: 1px solid var(--stroke-subtle);
   border-bottom: 1px solid var(--stroke-subtle);
@@ -850,7 +877,7 @@
   background: linear-gradient(180deg, #111A2C 0%, #0E1524 100%);
   border: 1px solid var(--stroke-medium);
   border-radius: var(--radius-md);
-  padding: 1.6rem;
+  padding: 1.4rem;
   box-shadow: var(--shadow-card);
 }
 .timeline-item {
@@ -890,6 +917,7 @@
   justify-content: space-between;
   align-items: baseline;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 .timeline-title {
   font-weight: 600;
@@ -914,4 +942,183 @@
   background: rgba(255, 255, 255, 0.06);
   color: #CBD5E1;
   border: 1px solid var(--stroke-subtle);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (OPTIMIZADO PARA SMARTPHONES Y DEVTOOLS F12)
+   ========================================================================== */
+
+@media (max-width: 992px) {
+  .header-container {
+    padding: 0.75rem 1.25rem;
+    gap: 1rem;
+  }
+  .search-input {
+    width: 220px;
+    &:focus {
+      width: 260px;
+    }
+  }
+  .aura-main {
+    padding: 1.5rem 1.25rem 2.5rem;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  /* Cabecera Móvil Limpia y Ordenada */
+  .header-container {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.85rem 1rem;
+    gap: 0.85rem;
+  }
+
+  .brand-wrapper {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .brand-name {
+    font-size: 1.2rem;
+  }
+  .brand-subtitle {
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
+
+  .header-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+  .search-input {
+    width: 100% !important;
+  }
+
+  .header-actions .btn-primary {
+    width: 100%;
+    padding: 0.75rem;
+  }
+
+  .user-pill {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  /* Pestañas con Desplazamiento Táctil Fluido */
+  .aura-nav {
+    border-bottom: 1px solid var(--stroke-medium);
+  }
+  .nav-container {
+    padding: 0 0.85rem;
+    gap: 0.35rem;
+  }
+  .nav-tab {
+    padding: 0.75rem 0.95rem;
+    font-size: 0.82rem;
+  }
+
+  /* Métricas y Tarjetas de Resumen en Móvil */
+  .aura-main {
+    padding: 1.25rem 0.85rem 2rem;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-card {
+    padding: 1.1rem;
+  }
+
+  /* Título y Acciones de la Vista */
+  .view-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+  }
+  .view-header > div:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem !important;
+    width: 100%;
+  }
+  .view-header .btn-secondary,
+  .view-header .btn-primary {
+    width: 100%;
+    padding: 0.7rem;
+  }
+
+  /* Barra de Filtros en Columna */
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+  .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.3rem;
+  }
+  .filter-select {
+    width: 100%;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.85rem;
+  }
+  .filter-bar > div:last-child {
+    margin-left: 0 !important;
+    text-align: center;
+    padding-top: 0.35rem;
+    border-top: 1px solid var(--stroke-subtle);
+  }
+
+  /* Modales Adaptados a Pantallas Pequeñas */
+  .modal-overlay {
+    padding: 0.65rem;
+  }
+  .modal-container {
+    max-height: 94vh;
+    border-radius: var(--radius-md);
+  }
+  .modal-header {
+    padding: 1rem 1.15rem;
+  }
+  .modal-body {
+    padding: 1.15rem;
+    gap: 0.95rem;
+  }
+  .modal-footer {
+    padding: 0.85rem 1.15rem;
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+  .modal-footer button {
+    width: 100%;
+    padding: 0.75rem;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Toast en Móvil */
+  .toast-container {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+  }
+  .toast {
+    min-width: 0;
+    width: 100%;
+  }
 }
