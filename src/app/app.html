@@ -27,7 +27,8 @@
             type="text" 
             class="search-input" 
             placeholder="Buscar por título, área, colaborador..." 
-            [(ngModel)]="searchQuery" 
+            [value]="searchQuery()"
+            (input)="onSearchChange($any($event.target).value)" 
           />
         </div>
 
@@ -173,10 +174,10 @@
         <div class="view-title-group">
           <h2>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            @if (currentTab() === 'laborales') {
-              Documentos Laborales y de Personal
-            } @else if (currentTab() === 'administrativos') {
+            @if (filterCategory() === 'administrativos' || currentTab() === 'administrativos') {
               Documentos Administrativos e Institucionales
+            } @else if (filterCategory() === 'laborales' || currentTab() === 'laborales') {
+              Documentos Laborales y de Personal
             } @else if (currentTab() === 'vencimientos') {
               Control de Vencimientos y Renovaciones
             } @else {
@@ -184,10 +185,10 @@
             }
           </h2>
           <p>
-            @if (currentTab() === 'laborales') {
-              Contratos, adendas, convenios colectivos, boletas y reglamentos internos
-            } @else if (currentTab() === 'administrativos') {
+            @if (filterCategory() === 'administrativos' || currentTab() === 'administrativos') {
               Pólizas, licencias, arrendamientos, actas de directorio y certificaciones
+            } @else if (filterCategory() === 'laborales' || currentTab() === 'laborales') {
+              Contratos, adendas, convenios colectivos, boletas y reglamentos internos
             } @else if (currentTab() === 'vencimientos') {
               Monitoreo proactivo de licencias, contratos y pólizas por renovar
             } @else {
@@ -207,11 +208,11 @@
         </div>
       </div>
 
-      <!-- Filtros interactivos con trazados refinados -->
+      <!-- Filtros interactivos con trazados refinados y actualización reactiva al instante -->
       <div class="filter-bar">
         <div class="filter-group">
           <label>Clasificación:</label>
-          <select [(ngModel)]="filterCategory" class="filter-select">
+          <select [value]="filterCategory()" (change)="onCategoryFilterChange($any($event.target).value)" class="filter-select">
             <option value="all">Todos los Tipos</option>
             <option value="laborales">Laborales</option>
             <option value="administrativos">Administrativos</option>
@@ -220,7 +221,7 @@
 
         <div class="filter-group">
           <label>Estado / Vencimiento:</label>
-          <select [(ngModel)]="filterStatus" class="filter-select">
+          <select [value]="filterStatus()" (change)="onStatusFilterChange($any($event.target).value)" class="filter-select">
             <option value="all">Todos los Estados</option>
             <option value="vigente">Vigentes</option>
             <option value="proximo">Por Vencer (&lt; 60 días)</option>
@@ -231,7 +232,7 @@
 
         <div class="filter-group">
           <label>Nivel de Acceso:</label>
-          <select [(ngModel)]="filterAccess" class="filter-select">
+          <select [value]="filterAccess()" (change)="onAccessFilterChange($any($event.target).value)" class="filter-select">
             <option value="all">Todos los Permisos</option>
             <option value="confidencial">Confidencial (RRHH / Gerencia)</option>
             <option value="restringido">Restringido</option>
@@ -345,7 +346,7 @@
                       </span>
                     </td>
                     
-                    <!-- ACCIONES: BOTONES DE LA FOTO DEL USUARIO PERFECTAMENTE CONECTADOS -->
+                    <!-- ACCIONES: BOTONES DE LA FOTO DEL USUARIO -->
                     <td style="text-align: right;">
                       <div class="action-btns" style="justify-content: flex-end;">
                         @if (doc.status === 'proximo' || doc.status === 'vencido') {
@@ -354,17 +355,17 @@
                           </button>
                         }
                         
-                        <!-- BOTÓN 1 DE LA FOTO: HISTORIAL / VERSIONES -->
+                        <!-- BOTÓN 1: HISTORIAL / VERSIONES -->
                         <button class="action-btn-item btn-history" (click)="openVersionModal(doc)" title="Ver versiones y notas de cambio">
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
                         </button>
                         
-                        <!-- BOTÓN 2 DE LA FOTO: PERMISOS Y SEGURIDAD -->
+                        <!-- BOTÓN 2: PERMISOS Y SEGURIDAD -->
                         <button class="action-btn-item btn-perm" (click)="openPermModal(doc)" title="Configurar nivel de acceso y permisos">
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                         </button>
                         
-                        <!-- BOTÓN 3 DE LA FOTO: DESCARGA REAL DEL DOCUMENTO -->
+                        <!-- BOTÓN 3: DESCARGA REAL DEL DOCUMENTO -->
                         <button class="action-btn-item btn-download" (click)="triggerRealDownload(doc)" title="Descargar documento verificado">
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         </button>
@@ -422,7 +423,7 @@
     </div>
   }
 
-  <!-- ================= MODAL: SUBIR / REGISTRAR DOCUMENTO ================= -->
+  <!-- ================= MODAL: SUBIR / REGISTRAR DOCUMENTO (FORMULARIO DINÁMICO ADAPTATIVO) ================= -->
   @if (showUploadModal()) {
     <div class="modal-overlay">
       <div class="modal-container">
@@ -443,30 +444,90 @@
               <span>Soporta PDF, Word (.docx), Excel (.xlsx) y archivos comprimidos (.zip)</span>
             </div>
 
-            <div class="form-group">
-              <label>Título oficial del documento *</label>
-              <input type="text" class="form-control" placeholder="Ej: Contrato de Trabajo Indeterminado 2026" [(ngModel)]="newDoc.title" name="docTitle" required />
-            </div>
-
+            <!-- Paso 1: Selección de Clasificación Principal -->
             <div class="form-row">
               <div class="form-group">
-                <label>Clasificación del documento *</label>
-                <select class="form-control" [(ngModel)]="newDoc.category" name="docCategory" required>
-                  <option value="laborales">Documento Laboral (RRHH / Nóminas)</option>
-                  <option value="administrativos">Documento Administrativo (Legal / Pólizas / Licencias)</option>
+                <label>Clasificación Principal *</label>
+                <select class="form-control" [ngModel]="newDoc.category" (ngModelChange)="onFormCategoryChange($event)" name="docCategory" required>
+                  <option value="laborales">Documento Laboral (RRHH / Nóminas / Legajos)</option>
+                  <option value="administrativos">Documento Administrativo (Pólizas / Licencias / Contratos Comerciales)</option>
                 </select>
               </div>
+
+              <!-- Tipo Específico dinámico según clasificación -->
               <div class="form-group">
-                <label>Área o Departamento *</label>
-                <input type="text" class="form-control" placeholder="Ej: Recursos Humanos, Legal, SST" [(ngModel)]="newDoc.department" name="docDept" required />
+                <label>Tipo de Documento *</label>
+                @if (newDoc.category === 'laborales') {
+                  <select class="form-control" [(ngModel)]="newDoc.docSubType" name="docSubType">
+                    <option value="contrato">Contrato de Trabajo (Indeterminado / Sujeto a Modalidad)</option>
+                    <option value="boleta">Boleta de Pago Electrónica (PLAME)</option>
+                    <option value="convenio">Convenio Colectivo / Sindical</option>
+                    <option value="reglamento">Reglamento Interno de Trabajo (RIT) / Directiva</option>
+                    <option value="adenda">Adenda Contractual</option>
+                  </select>
+                } @else {
+                  <select class="form-control" [(ngModel)]="newDoc.docSubType" name="docSubType">
+                    <option value="licencia">Licencia de Funcionamiento / Certificado ITSE</option>
+                    <option value="poliza">Póliza de Seguros (SCTR / Multiriesgo / EPS)</option>
+                    <option value="arrendamiento">Contrato de Arrendamiento / Inmuebles</option>
+                    <option value="acta">Acta de Directorio / Poder Notarial</option>
+                    <option value="convenio_corporativo">Convenio Comercial Interinstitucional</option>
+                  </select>
+                }
+              </div>
+            </div>
+
+            <!-- Título del Documento -->
+            <div class="form-group">
+              <label>Título oficial del documento *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                [placeholder]="newDoc.category === 'laborales' ? 'Ej: Contrato de Trabajo Indeterminado - Colaborador' : 'Ej: Licencia de Funcionamiento ITSE - Sede Principal'" 
+                [(ngModel)]="newDoc.title" 
+                name="docTitle" 
+                required 
+              />
+            </div>
+
+            <!-- Campos adaptados según la clasificación -->
+            <div class="form-row">
+              <div class="form-group">
+                <label>Área o Departamento Custodio *</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  [placeholder]="newDoc.category === 'laborales' ? 'Ej: Recursos Humanos, Nómina, SST' : 'Ej: Gerencia General, Administración, Operaciones'" 
+                  [(ngModel)]="newDoc.department" 
+                  name="docDept" 
+                  required 
+                />
+              </div>
+
+              <div class="form-group">
+                <label>{{ newDoc.category === 'laborales' ? 'Colaborador / Empleado Asignado' : 'Entidad Emisora / Proveedor / Inmobiliaria' }}</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  [placeholder]="newDoc.category === 'laborales' ? 'Ej: Carlos Mendoza Quispe (DNI 45892147)' : 'Ej: Municipalidad de Lima / Rímac Seguros / Torre Prime'" 
+                  [(ngModel)]="newDoc.entityOrEmployee" 
+                  name="docEntity" 
+                />
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label>Colaborador / Entidad Relacionada</label>
-                <input type="text" class="form-control" placeholder="Ej: Carlos Mendoza Quispe o Rímac Seguros" [(ngModel)]="newDoc.employee" name="docEmp" />
+                <label>{{ newDoc.category === 'laborales' ? 'Nº Expediente / DNI / Código' : 'Nº Póliza / Certificado / Resolución' }}</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  [placeholder]="newDoc.category === 'laborales' ? 'Ej: D.L. 728 / EXP-2026' : 'Ej: POL-88910-R / ITSE-0492'" 
+                  [(ngModel)]="newDoc.policyOrResolutionNumber" 
+                  name="docCode" 
+                />
               </div>
+
               <div class="form-group">
                 <label>Nivel de Permisos y Acceso *</label>
                 <select class="form-control" [(ngModel)]="newDoc.accessLevel" name="docAccess" required>
@@ -483,8 +544,8 @@
                 <input type="date" class="form-control" [(ngModel)]="newDoc.expirationDate" name="docExpDate" />
               </div>
               <div class="form-group">
-                <label>Versión Inicial</label>
-                <input type="text" class="form-control" value="v1.0" readonly style="opacity: 0.7;" />
+                <label>Versión Inicial Registrada</label>
+                <input type="text" class="form-control" value="v1.0 (Hash Criptográfico SHA-256)" readonly style="opacity: 0.7;" />
               </div>
             </div>
 
@@ -497,7 +558,9 @@
 
           <div class="modal-footer">
             <button type="button" class="btn-secondary" (click)="closeUploadModal()">Cancelar</button>
-            <button type="submit" class="btn-primary">Guardar y Clasificar</button>
+            <button type="submit" class="btn-primary">
+              Guardar Documento {{ newDoc.category === 'laborales' ? 'Laboral' : 'Administrativo' }}
+            </button>
           </div>
         </form>
       </div>

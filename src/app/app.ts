@@ -18,11 +18,11 @@ export class App {
 
   readonly currentTab = signal<TabType>('todos');
 
-  // Search & Filters
-  searchQuery = '';
-  filterCategory = 'all';
-  filterStatus = 'all';
-  filterAccess = 'all';
+  // Filtros reactivos con Signals (Zoneless compliant)
+  readonly searchQuery = signal<string>('');
+  readonly filterCategory = signal<string>('all');
+  readonly filterStatus = signal<string>('all');
+  readonly filterAccess = signal<string>('all');
 
   // Modals state
   readonly showUploadModal = signal<boolean>(false);
@@ -31,13 +31,15 @@ export class App {
   readonly selectedDocForRenew = signal<DocumentItem | null>(null);
   readonly selectedDocForPreview = signal<DocumentItem | null>(null);
 
-  // Form Models
+  // Form Models para Subida (reactivo y adaptativo según clasificación)
   newDoc = {
     title: '',
     category: 'laborales' as DocCategory,
+    docSubType: 'contrato', // tipo específico según clasificación
     department: '',
-    employee: '',
+    entityOrEmployee: '',
     accessLevel: 'confidencial' as AccessLevel,
+    policyOrResolutionNumber: '',
     expirationDate: '',
     notes: ''
   };
@@ -55,24 +57,31 @@ export class App {
     this.docsService.docs().filter(d => d.status === 'vencido' || d.status === 'proximo').length
   );
 
-  // Filtered Documents
+  // Filtered Documents reactivo
   readonly filteredDocs = computed(() => {
     const list = this.docsService.docs();
     const tab = this.currentTab();
-    const q = this.searchQuery.toLowerCase().trim();
-    const cat = this.filterCategory;
-    const stat = this.filterStatus;
-    const acc = this.filterAccess;
+    const q = this.searchQuery().toLowerCase().trim();
+    const cat = this.filterCategory();
+    const stat = this.filterStatus();
+    const acc = this.filterAccess();
 
     return list.filter(doc => {
+      // 1. Filtrado por Pestaña
       if (tab === 'laborales' && doc.category !== 'laborales') return false;
       if (tab === 'administrativos' && doc.category !== 'administrativos') return false;
       if (tab === 'vencimientos' && doc.status !== 'vencido' && doc.status !== 'proximo') return false;
 
+      // 2. Filtrado por Selector de Clasificación (Laborales vs Administrativos)
       if (cat !== 'all' && doc.category !== cat) return false;
+
+      // 3. Filtrado por Estado de Vencimiento
       if (stat !== 'all' && doc.status !== stat) return false;
+
+      // 4. Filtrado por Nivel de Acceso
       if (acc !== 'all' && doc.accessLevel !== acc) return false;
 
+      // 5. Búsqueda por texto
       if (q) {
         const matchTitle = doc.title.toLowerCase().includes(q);
         const matchId = doc.id.toLowerCase().includes(q);
@@ -88,6 +97,47 @@ export class App {
 
   setTab(tab: TabType): void {
     this.currentTab.set(tab);
+    // Sincronizar automáticamente el selector si se cambia de pestaña
+    if (tab === 'laborales') {
+      this.filterCategory.set('laborales');
+    } else if (tab === 'administrativos') {
+      this.filterCategory.set('administrativos');
+    } else if (tab === 'todos') {
+      this.filterCategory.set('all');
+    }
+  }
+
+  onCategoryFilterChange(value: string): void {
+    this.filterCategory.set(value);
+    if (value === 'laborales' && this.currentTab() === 'administrativos') {
+      this.currentTab.set('laborales');
+    } else if (value === 'administrativos' && this.currentTab() === 'laborales') {
+      this.currentTab.set('administrativos');
+    }
+  }
+
+  onStatusFilterChange(value: string): void {
+    this.filterStatus.set(value);
+  }
+
+  onAccessFilterChange(value: string): void {
+    this.filterAccess.set(value);
+  }
+
+  onSearchChange(value: string): void {
+    this.searchQuery.set(value);
+  }
+
+  // Cambio de clasificación en el Formulario de Carga
+  onFormCategoryChange(cat: DocCategory): void {
+    this.newDoc.category = cat;
+    if (cat === 'laborales') {
+      this.newDoc.docSubType = 'contrato';
+      this.newDoc.department = 'Recursos Humanos';
+    } else {
+      this.newDoc.docSubType = 'licencia';
+      this.newDoc.department = 'Administración General';
+    }
   }
 
   // Preview Document Modal
@@ -139,12 +189,18 @@ Certificado criptográfico SHA-256 verificado por Aura Security.
 
   // Modals methods
   openUploadModal(): void {
+    const defaultCat: DocCategory = (this.currentTab() === 'administrativos' || this.filterCategory() === 'administrativos') 
+      ? 'administrativos' 
+      : 'laborales';
+
     this.newDoc = {
       title: '',
-      category: 'laborales',
-      department: '',
-      employee: '',
+      category: defaultCat,
+      docSubType: defaultCat === 'laborales' ? 'contrato' : 'licencia',
+      department: defaultCat === 'laborales' ? 'Recursos Humanos' : 'Administración General',
+      entityOrEmployee: '',
       accessLevel: 'confidencial',
+      policyOrResolutionNumber: '',
       expirationDate: '',
       notes: ''
     };
@@ -169,19 +225,29 @@ Certificado criptográfico SHA-256 verificado por Aura Security.
       else if (diff <= 45) status = 'proximo';
     }
 
+    const tags = [
+      this.newDoc.category === 'laborales' ? 'Laboral' : 'Administrativo',
+      this.newDoc.docSubType.toUpperCase(),
+      this.newDoc.department
+    ];
+
+    if (this.newDoc.policyOrResolutionNumber) {
+      tags.push(this.newDoc.policyOrResolutionNumber);
+    }
+
     this.docsService.addDocument(
       {
         title: this.newDoc.title.trim(),
         category: this.newDoc.category,
         type: 'pdf',
-        size: '2.1 MB',
+        size: '2.4 MB',
         accessLevel: this.newDoc.accessLevel,
         department: this.newDoc.department.trim() || 'General',
-        employee: this.newDoc.employee.trim() || 'General Aura',
+        employee: this.newDoc.entityOrEmployee.trim() || (this.newDoc.category === 'laborales' ? 'Colaborador General' : 'Institución / Sede'),
         uploadDate: new Date().toISOString().split('T')[0],
         expirationDate: this.newDoc.expirationDate || 'permanente',
         status: status,
-        tags: [this.newDoc.category === 'laborales' ? 'Laboral' : 'Administrativo', this.newDoc.department]
+        tags: tags
       },
       this.newDoc.notes
     );
