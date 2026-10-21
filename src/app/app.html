@@ -1,0 +1,641 @@
+<div class="aura-app-layout">
+
+  <!-- ================= TOPBAR HEADER ================= -->
+  <header class="aura-header">
+    <div class="header-container">
+      
+      <!-- Brand & Official Logo -->
+      <div class="brand-wrapper">
+        <div class="logo-box" title="Aura Docs">
+          <img src="aura-logo.jpg" alt="Aura Logo Oficial" />
+        </div>
+        <div>
+          <div class="brand-title-row">
+            <span class="brand-name">AURA</span>
+            <span class="brand-badge">DOCS</span>
+            <span class="enterprise-tag">Gestión Documental Angular</span>
+          </div>
+          <p class="brand-subtitle">Almacenamiento, Clasificación, Vencimientos y Control de Acceso</p>
+        </div>
+      </div>
+
+      <!-- Live Search & User Actions -->
+      <div class="header-actions">
+        <div class="search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Buscar por título, área, colaborador..." 
+            [(ngModel)]="searchQuery" 
+          />
+        </div>
+
+        <button class="btn-primary" (click)="openUploadModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Subir Documento
+        </button>
+
+        <div class="user-pill">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <span class="user-name">Administrador Aura</span>
+            <span class="user-role">Acceso Total</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= NAVIGATION TABS ================= -->
+  <nav class="aura-nav">
+    <div class="nav-container">
+      <button class="nav-tab" [class.active]="currentTab() === 'todos'" (click)="setTab('todos')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        Todos los Documentos
+      </button>
+      <button class="nav-tab" [class.active]="currentTab() === 'laborales'" (click)="setTab('laborales')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Documentos Laborales
+      </button>
+      <button class="nav-tab" [class.active]="currentTab() === 'administrativos'" (click)="setTab('administrativos')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        Documentos Administrativos
+      </button>
+      <button class="nav-tab" [class.active]="currentTab() === 'vencimientos'" (click)="setTab('vencimientos')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        Vencimientos y Renovaciones
+        <span class="badge-count danger">{{ pendingRenewalsCount() }}</span>
+      </button>
+      <button class="nav-tab" [class.active]="currentTab() === 'historial'" (click)="setTab('historial')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+        Historial de Acceso y Auditoría
+      </button>
+    </div>
+  </nav>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="aura-main">
+    
+    <!-- STATS OVERVIEW CARDS -->
+    <section class="stats-grid">
+      <div class="stat-card red">
+        <div class="stat-icon red">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Documentos Almacenados</span>
+          <span class="stat-val">{{ totalDocsCount() }}</span>
+          <span class="stat-sub">100% clasificados en repositorio</span>
+        </div>
+      </div>
+
+      <div class="stat-card blue">
+        <div class="stat-icon blue">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Documentos Laborales</span>
+          <span class="stat-val">{{ laboralesCount() }}</span>
+          <span class="stat-sub">Contratos, boletas y legajos</span>
+        </div>
+      </div>
+
+      <div class="stat-card purple">
+        <div class="stat-icon purple">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Doc. Administrativos</span>
+          <span class="stat-val">{{ adminCount() }}</span>
+          <span class="stat-sub">Pólizas, licencias y convenios</span>
+        </div>
+      </div>
+
+      <div class="stat-card amber">
+        <div class="stat-icon amber">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Vencimientos Activos</span>
+          <span class="stat-val">{{ pendingRenewalsCount() }}</span>
+          <span class="stat-sub">Requieren renovación o seguimiento</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: HISTORIAL DE ACCESO Y AUDITORÍA -->
+    @if (currentTab() === 'historial') {
+      <div class="view-header">
+        <div class="view-title-group">
+          <h2>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Historial de Acceso y Trazabilidad (Auditoría Aura)
+          </h2>
+          <p>Registro inmutable de descargas, aperturas, modificaciones de permisos y renovaciones</p>
+        </div>
+        <div>
+          <button class="btn-secondary" (click)="exportAuditExcel()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            Exportar Auditoría a Excel (.csv)
+          </button>
+        </div>
+      </div>
+
+      <div class="timeline-card">
+        <div class="timeline-list">
+          @for (log of docsService.logs(); track log.id) {
+            <div class="timeline-item">
+              <div class="timeline-icon-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-header">
+                  <div class="timeline-title">{{ log.user }} - <span style="color: var(--aura-red); font-weight: 700;">{{ log.action }}</span></div>
+                  <div class="timeline-time">{{ log.date }}</div>
+                </div>
+                <div class="timeline-desc">
+                  Documento: <strong>{{ log.docName }}</strong> (ID: {{ log.docId }})
+                </div>
+                <div>
+                  <span class="timeline-badge">{{ log.badge }}</span>
+                  <span class="timeline-badge" style="background: rgba(225,29,72,0.12); color: #FB7185; border-color: rgba(225,29,72,0.3);">IP: {{ log.ip }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <!-- TABS DOCUMENTOS (TODOS, LABORALES, ADMINISTRATIVOS, VENCIMIENTOS) -->
+      <div class="view-header">
+        <div class="view-title-group">
+          <h2>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            @if (currentTab() === 'laborales') {
+              Documentos Laborales y de Personal
+            } @else if (currentTab() === 'administrativos') {
+              Documentos Administrativos e Institucionales
+            } @else if (currentTab() === 'vencimientos') {
+              Control de Vencimientos y Renovaciones
+            } @else {
+              Gestión Integral de Documentos
+            }
+          </h2>
+          <p>
+            @if (currentTab() === 'laborales') {
+              Contratos, adendas, convenios colectivos, boletas y reglamentos internos
+            } @else if (currentTab() === 'administrativos') {
+              Pólizas, licencias, arrendamientos, actas de directorio y certificaciones
+            } @else if (currentTab() === 'vencimientos') {
+              Monitoreo proactivo de licencias, contratos y pólizas por renovar
+            } @else {
+              Repositorio central con control de versiones, vencimientos y permisos
+            }
+          </p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+          <button class="btn-secondary" (click)="printReport()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Imprimir Reporte
+          </button>
+          <button class="btn-primary" (click)="openUploadModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Cargar Documento
+          </button>
+        </div>
+      </div>
+
+      <!-- Filtros interactivos con trazados refinados -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label>Clasificación:</label>
+          <select [(ngModel)]="filterCategory" class="filter-select">
+            <option value="all">Todos los Tipos</option>
+            <option value="laborales">Laborales</option>
+            <option value="administrativos">Administrativos</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Estado / Vencimiento:</label>
+          <select [(ngModel)]="filterStatus" class="filter-select">
+            <option value="all">Todos los Estados</option>
+            <option value="vigente">Vigentes</option>
+            <option value="proximo">Por Vencer (&lt; 60 días)</option>
+            <option value="vencido">Vencidos</option>
+            <option value="permanente">Permanentes</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Nivel de Acceso:</label>
+          <select [(ngModel)]="filterAccess" class="filter-select">
+            <option value="all">Todos los Permisos</option>
+            <option value="confidencial">Confidencial (RRHH / Gerencia)</option>
+            <option value="restringido">Restringido</option>
+            <option value="publico">Público Interno</option>
+          </select>
+        </div>
+
+        <div style="margin-left: auto; font-size: 0.82rem; color: var(--txt-muted);">
+          Mostrando <strong style="color: var(--txt-pure);">{{ filteredDocs().length }}</strong> documentos
+        </div>
+      </div>
+
+      <!-- Tabla de Documentos -->
+      <div class="table-card">
+        <div class="table-responsive">
+          <table class="aura-table">
+            <thead>
+              <tr>
+                <th>Documento / Nombre</th>
+                <th>Clasificación</th>
+                <th>Área / Asignado</th>
+                <th>Versión</th>
+                <th>Vencimiento</th>
+                <th>Permisos</th>
+                <th style="text-align: right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (filteredDocs().length === 0) {
+                <tr>
+                  <td colspan="7" style="text-align: center; padding: 2.8rem; color: var(--txt-muted);">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 0.6rem; opacity: 0.5;"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                    <p>No se encontraron documentos con los filtros seleccionados.</p>
+                  </td>
+                </tr>
+              } @else {
+                @for (doc of filteredDocs(); track doc.id) {
+                  <tr>
+                    <td>
+                      <div class="doc-cell">
+                        <div class="doc-type-icon" [ngClass]="doc.type">{{ doc.type.toUpperCase() }}</div>
+                        <div>
+                          <div class="doc-info-title" style="cursor: pointer;" (click)="openPreviewModal(doc)">
+                            {{ doc.title }}
+                          </div>
+                          <div class="doc-info-sub">
+                            <span>{{ doc.id }}</span>
+                            <span>•</span>
+                            <span>{{ doc.size }}</span>
+                            <span>•</span>
+                            @for (tag of doc.tags; track tag) {
+                              <span>#{{ tag }} </span>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="tag-badge" [ngClass]="doc.category">
+                        {{ doc.category === 'laborales' ? 'Laboral' : 'Administrativo' }}
+                      </span>
+                    </td>
+                    <td>
+                      <div style="font-weight: 600; font-size: 0.84rem; color: var(--txt-pure);">{{ doc.department }}</div>
+                      <div style="font-size: 0.74rem; color: var(--txt-muted);">{{ doc.employee }}</div>
+                    </td>
+                    <td>
+                      <button class="btn-secondary" style="padding: 0.25rem 0.65rem; font-size: 0.76rem;" (click)="openVersionModal(doc)" title="Ver versiones del documento">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                        {{ doc.version }} ({{ doc.versions.length }})
+                      </button>
+                    </td>
+                    <td>
+                      @if (doc.status === 'vencido') {
+                        <span class="exp-badge vencido">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                          Vencido ({{ doc.expirationDate }})
+                        </span>
+                      } @else if (doc.status === 'proximo') {
+                        <span class="exp-badge proximo">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                          Renovar ({{ doc.expirationDate }})
+                        </span>
+                      } @else if (doc.status === 'permanente') {
+                        <span class="exp-badge permanente">Sin Vencimiento</span>
+                      } @else {
+                        <span class="exp-badge vigente">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                          Vigente ({{ doc.expirationDate }})
+                        </span>
+                      }
+                    </td>
+                    <td>
+                      <span (click)="openPermModal(doc)" title="Clic para configurar permisos">
+                        @if (doc.accessLevel === 'confidencial') {
+                          <span class="perm-badge confidencial">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            Confidencial
+                          </span>
+                        } @else if (doc.accessLevel === 'restringido') {
+                          <span class="perm-badge restringido">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            Restringido
+                          </span>
+                        } @else {
+                          <span class="perm-badge publico">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                            Público Int.
+                          </span>
+                        }
+                      </span>
+                    </td>
+                    
+                    <!-- ACCIONES: BOTONES DE LA FOTO DEL USUARIO PERFECTAMENTE CONECTADOS -->
+                    <td style="text-align: right;">
+                      <div class="action-btns" style="justify-content: flex-end;">
+                        @if (doc.status === 'proximo' || doc.status === 'vencido') {
+                          <button class="action-btn-item btn-renew" (click)="openRenewModal(doc)" title="Renovar vigencia del documento">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                          </button>
+                        }
+                        
+                        <!-- BOTÓN 1 DE LA FOTO: HISTORIAL / VERSIONES -->
+                        <button class="action-btn-item btn-history" (click)="openVersionModal(doc)" title="Ver versiones y notas de cambio">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                        </button>
+                        
+                        <!-- BOTÓN 2 DE LA FOTO: PERMISOS Y SEGURIDAD -->
+                        <button class="action-btn-item btn-perm" (click)="openPermModal(doc)" title="Configurar nivel de acceso y permisos">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        </button>
+                        
+                        <!-- BOTÓN 3 DE LA FOTO: DESCARGA REAL DEL DOCUMENTO -->
+                        <button class="action-btn-item btn-download" (click)="triggerRealDownload(doc)" title="Descargar documento verificado">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+  </main>
+
+  <!-- ================= MODAL: VISUALIZADOR SEGURO DE DOCUMENTO ================= -->
+  @if (selectedDocForPreview()) {
+    <div class="modal-overlay">
+      <div class="modal-container" style="max-width: 620px;">
+        <div class="modal-header">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            Visor Oficial: {{ selectedDocForPreview()?.id }}
+          </h3>
+          <button class="close-modal-btn" (click)="closePreviewModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div style="background: #0B1220; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--stroke-medium);">
+            <h4 style="color: var(--txt-pure); margin-bottom: 0.5rem; font-size: 1.05rem;">{{ selectedDocForPreview()?.title }}</h4>
+            <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.85rem;">
+              <span class="tag-badge" [ngClass]="selectedDocForPreview()!.category">{{ selectedDocForPreview()?.category?.toUpperCase() }}</span>
+              <span class="perm-badge" [ngClass]="selectedDocForPreview()!.accessLevel">{{ selectedDocForPreview()?.accessLevel?.toUpperCase() }}</span>
+              <span class="badge-count neutral">Versión {{ selectedDocForPreview()?.version }}</span>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--txt-muted); line-height: 1.6;">
+              Área de custodia: <strong style="color: var(--txt-pure);">{{ selectedDocForPreview()?.department }}</strong><br>
+              Colaborador / Titular: <strong style="color: var(--txt-pure);">{{ selectedDocForPreview()?.employee }}</strong><br>
+              Fecha de Registro: <strong style="color: var(--txt-pure);">{{ selectedDocForPreview()?.uploadDate }}</strong><br>
+              Vigencia / Renovación: <strong style="color: var(--txt-pure);">{{ selectedDocForPreview()?.expirationDate }}</strong>
+            </p>
+          </div>
+          <div style="font-size: 0.78rem; color: var(--txt-muted); background: rgba(16, 185, 129, 0.1); border-left: 3px solid #10B981; padding: 0.75rem; border-radius: 6px;">
+            Documento auditado con firma digital conforme al estándar Aura Enterprise.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="closePreviewModal()">Cerrar</button>
+          <button type="button" class="btn-primary" (click)="triggerRealDownload(selectedDocForPreview()!)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Descargar Documento
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ================= MODAL: SUBIR / REGISTRAR DOCUMENTO ================= -->
+  @if (showUploadModal()) {
+    <div class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+            Almacenar y Clasificar Documento
+          </h3>
+          <button class="close-modal-btn" (click)="closeUploadModal()">&times;</button>
+        </div>
+
+        <form (ngSubmit)="submitUploadDocument()">
+          <div class="modal-body">
+            
+            <div class="dropzone">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <p>Arrastra tu archivo aquí o haz clic para seleccionar</p>
+              <span>Soporta PDF, Word (.docx), Excel (.xlsx) y archivos comprimidos (.zip)</span>
+            </div>
+
+            <div class="form-group">
+              <label>Título oficial del documento *</label>
+              <input type="text" class="form-control" placeholder="Ej: Contrato de Trabajo Indeterminado 2026" [(ngModel)]="newDoc.title" name="docTitle" required />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Clasificación del documento *</label>
+                <select class="form-control" [(ngModel)]="newDoc.category" name="docCategory" required>
+                  <option value="laborales">Documento Laboral (RRHH / Nóminas)</option>
+                  <option value="administrativos">Documento Administrativo (Legal / Pólizas / Licencias)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Área o Departamento *</label>
+                <input type="text" class="form-control" placeholder="Ej: Recursos Humanos, Legal, SST" [(ngModel)]="newDoc.department" name="docDept" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Colaborador / Entidad Relacionada</label>
+                <input type="text" class="form-control" placeholder="Ej: Carlos Mendoza Quispe o Rímac Seguros" [(ngModel)]="newDoc.employee" name="docEmp" />
+              </div>
+              <div class="form-group">
+                <label>Nivel de Permisos y Acceso *</label>
+                <select class="form-control" [(ngModel)]="newDoc.accessLevel" name="docAccess" required>
+                  <option value="confidencial">Confidencial (Solo Gerencia / RRHH)</option>
+                  <option value="restringido">Restringido (Jefaturas y Auditoría)</option>
+                  <option value="publico">Público Interno (Todos los Colaboradores)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Fecha de Vencimiento (Dejar en blanco si es permanente)</label>
+                <input type="date" class="form-control" [(ngModel)]="newDoc.expirationDate" name="docExpDate" />
+              </div>
+              <div class="form-group">
+                <label>Versión Inicial</label>
+                <input type="text" class="form-control" value="v1.0" readonly style="opacity: 0.7;" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Notas de control de versiones y auditoría</label>
+              <textarea class="form-control" rows="2" placeholder="Describa el contenido, adenda, o detalles clave..." [(ngModel)]="newDoc.notes" name="docNotes"></textarea>
+            </div>
+
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="closeUploadModal()">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar y Clasificar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- ================= MODAL: VERSIONES DEL DOCUMENTO (BOTÓN RELOJ) ================= -->
+  @if (selectedDocForVersion()) {
+    <div class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3>Versiones: {{ selectedDocForVersion()?.title }}</h3>
+          <button class="close-modal-btn" (click)="closeVersionModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div style="margin-bottom: 1rem; padding: 0.95rem; background: #0B1220; border-radius: 8px; border: 1px solid var(--stroke-medium);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-weight: 700; color: var(--txt-pure);">Versión Actual: {{ selectedDocForVersion()?.version }}</span>
+              <span class="tag-badge" [ngClass]="selectedDocForVersion()!.category">{{ selectedDocForVersion()?.category?.toUpperCase() }}</span>
+            </div>
+            <p style="font-size: 0.78rem; color: var(--txt-muted); margin-top: 4px;">
+              ID: {{ selectedDocForVersion()?.id }} • Clasificación: {{ selectedDocForVersion()?.department }}
+            </p>
+          </div>
+
+          <h4 style="font-size: 0.88rem; margin-bottom: 0.75rem; color: var(--txt-pure);">Historial Cronológico de Versiones</h4>
+          <div class="timeline-list">
+            @for (v of selectedDocForVersion()?.versions; track v.v) {
+              <div class="timeline-item" style="padding-bottom: 1.2rem;">
+                <div class="timeline-icon-box" style="width: 28px; height: 28px;">
+                  <span style="font-size: 0.7rem; font-weight: 800; color: #fff;">{{ v.v }}</span>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-header">
+                    <span class="timeline-title">{{ v.author }}</span>
+                    <span class="timeline-time">{{ v.date }}</span>
+                  </div>
+                  <p class="timeline-desc">{{ v.change }}</p>
+                  <button class="btn-secondary" style="margin-top: 6px; padding: 0.2rem 0.6rem; font-size: 0.72rem;" (click)="triggerRealDownload(selectedDocForVersion()!)">
+                    Descargar esta versión ({{ v.v }})
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div style="margin-top: 1rem; border-top: 1px solid var(--stroke-subtle); padding-top: 1rem;">
+            <h5 style="font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--txt-pure);">Subir Nueva Versión (Incremento de versión)</h5>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="text" class="form-control" placeholder="Motivo del cambio / Actualización..." [(ngModel)]="newVersionNote" style="flex: 1;" />
+              <button class="btn-primary" (click)="submitNewVersion()">
+                Actualizar Versión
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ================= MODAL: GESTIONAR PERMISOS (BOTÓN CANDADO) ================= -->
+  @if (selectedDocForPerm()) {
+    <div class="modal-overlay">
+      <div class="modal-container" style="max-width: 520px;">
+        <div class="modal-header">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            Permisos y Control de Acceso
+          </h3>
+          <button class="close-modal-btn" (click)="closePermModal()">&times;</button>
+        </div>
+        <form (ngSubmit)="submitSavePermissions()">
+          <div class="modal-body">
+            <p style="font-size: 0.88rem; color: var(--txt-pure); margin-bottom: 0.5rem;">{{ selectedDocForPerm()?.title }}</p>
+            <div class="form-group">
+              <label>Seleccionar Nivel de Acceso y Visibilidad:</label>
+              <select class="form-control" [(ngModel)]="selectedPermLevel" name="permLevel">
+                <option value="confidencial">Confidencial (Solo Gerencia General y RRHH)</option>
+                <option value="restringido">Restringido (Jefes de Área y Auditores)</option>
+                <option value="publico">Público Interno (Acceso a todos los colaboradores)</option>
+              </select>
+            </div>
+            <div style="font-size: 0.78rem; color: var(--txt-muted); background: #0B1220; padding: 0.85rem; border-radius: 8px; border-left: 3px solid var(--aura-red);">
+              Los cambios de permisos quedan registrados de forma inmutable en el historial de trazabilidad de Aura con dirección IP y timestamp del usuario.
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn-primary">Guardar Cambios de Seguridad</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- ================= MODAL: RENOVAR DOCUMENTO ================= -->
+  @if (selectedDocForRenew()) {
+    <div class="modal-overlay">
+      <div class="modal-container" style="max-width: 540px;">
+        <div class="modal-header">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            Renovación de Documento
+          </h3>
+          <button class="close-modal-btn" (click)="closeRenewModal()">&times;</button>
+        </div>
+        <form (ngSubmit)="submitRenewDocument()">
+          <div class="modal-body">
+            <p style="font-weight: 700; color: var(--txt-pure); font-size: 0.92rem;">{{ selectedDocForRenew()?.title }}</p>
+            <div style="font-size: 0.8rem; color: var(--txt-muted);">
+              Vencimiento actual: <span style="color: #FB7185; font-weight: 700;">{{ selectedDocForRenew()?.expirationDate }}</span>
+            </div>
+
+            <div class="form-group" style="margin-top: 1rem;">
+              <label>Nueva Fecha de Vencimiento / Vigencia *</label>
+              <input type="date" class="form-control" [(ngModel)]="renewNewDate" name="renewDate" required />
+            </div>
+
+            <div class="form-group">
+              <label>Detalle de la Renovación (Adenda / Póliza / Resolución)</label>
+              <textarea class="form-control" rows="3" placeholder="Ej: Renovación anual de póliza Rímac SCTR aprobada con cotización #8849..." [(ngModel)]="renewNotes" name="renewNotes"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn-primary">Aprobar y Registrar Renovación</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Contenedor de notificaciones flotantes -->
+  @if (docsService.notification()) {
+    <div class="toast-container">
+      <div class="toast">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>{{ docsService.notification() }}</span>
+      </div>
+    </div>
+  }
+
+</div>

@@ -1,0 +1,108 @@
+/* ==========================================================================
+   AURA DOCS - SISTEMA DE DISEÑO PREMIUM (UI/UX MODERNA Y PROFESIONAL)
+   Identidad Aura enriquecida:
+   - Deep Midnight Canvas: #090e17 (Fondo con matiz arquitectónico limpio)
+   - Slate & Indigo Accents: Equilibrio visual que evita monotonía
+   - Rojo Institucional Aura: #E11D48 / #DC2626 (Vibrante y pulido)
+   ========================================================================== */
+
+:root {
+  /* Marca Aura */
+  --aura-red: #E11D48;
+  --aura-red-hover: #BE123C;
+  --aura-red-subtle: rgba(225, 29, 72, 0.12);
+  --aura-red-border: rgba(225, 29, 72, 0.3);
+
+  /* Paleta de Fondos con Profundidad */
+  --canvas-base: #0B111E;
+  --canvas-surface: #10192A;
+  --canvas-card: #152238;
+  --canvas-card-hover: #192B47;
+  --canvas-overlay: rgba(7, 12, 22, 0.88);
+
+  /* Bordes y Trazados */
+  --stroke-subtle: rgba(255, 255, 255, 0.08);
+  --stroke-medium: rgba(255, 255, 255, 0.14);
+  --stroke-bright: rgba(255, 255, 255, 0.24);
+
+  /* Texto y Legibilidad */
+  --txt-pure: #FFFFFF;
+  --txt-body: #E2E8F0;
+  --txt-muted: #94A3B8;
+  --txt-dim: #64748B;
+
+  /* Semáforos y Acentos Funcionales Diferenciados */
+  --badge-emerald: #10B981;
+  --badge-emerald-bg: rgba(16, 185, 129, 0.14);
+  --badge-emerald-border: rgba(16, 185, 129, 0.32);
+
+  --badge-amber: #F59E0B;
+  --badge-amber-bg: rgba(245, 158, 11, 0.14);
+  --badge-amber-border: rgba(245, 158, 11, 0.32);
+
+  --badge-rose: #F43F5E;
+  --badge-rose-bg: rgba(244, 63, 94, 0.15);
+  --badge-rose-border: rgba(244, 63, 94, 0.35);
+
+  --badge-cyan: #06B6D4;
+  --badge-cyan-bg: rgba(6, 182, 212, 0.14);
+  --badge-cyan-border: rgba(6, 182, 212, 0.32);
+
+  --badge-indigo: #6366F1;
+  --badge-indigo-bg: rgba(99, 102, 241, 0.14);
+  --badge-indigo-border: rgba(99, 102, 241, 0.32);
+
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Sombras de Elevación */
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 12px 28px -4px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.12);
+  --shadow-glow: 0 0 25px rgba(225, 29, 72, 0.28);
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-full: 9999px;
+
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: 
+    radial-gradient(circle at 10% 10%, rgba(225, 29, 72, 0.08) 0%, transparent 35%),
+    radial-gradient(circle at 85% 15%, rgba(6, 182, 212, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 50% 90%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+    linear-gradient(180deg, #070B13 0%, #0B111E 40%, #060910 100%);
+  background-attachment: fixed;
+  color: var(--txt-body);
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbars Premium */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #070B13;
+}
+::-webkit-scrollbar-thumb {
+  background: #1B2B47;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--aura-red);
+}

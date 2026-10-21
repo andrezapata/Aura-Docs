@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura Docs — Gestión Documental Corporativa</title>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ================= TOPBAR HEADER ================= -->
+  <header class="aura-header">
+    <div class="header-container">
+      
+      <!-- Brand & Official Logo -->
+      <div class="brand-wrapper">
+        <div class="logo-box" title="Aura Docs">
+          <img src="aura-logo.jpg" alt="Aura Logo Oficial" />
+        </div>
+        <div>
+          <div class="brand-title-row">
+            <span class="brand-name">AURA</span>
+            <span class="brand-badge">DOCS</span>
+            <span class="enterprise-tag">Gestión Documental</span>
+          </div>
+          <p class="brand-subtitle">Almacenamiento, Clasificación, Vencimientos y Control de Acceso</p>
+        </div>
+      </div>
+
+      <!-- Live Search & User -->
+      <div class="header-actions">
+        <div class="search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input 
+            type="text" 
+            id="globalSearch" 
+            class="search-input" 
+            placeholder="Buscar por título, área, colaborador..." 
+          />
+        </div>
+
+        <button class="btn-primary" id="btnOpenUploadModal">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Subir Documento
+        </button>
+
+        <div class="user-pill">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <span class="user-name">Administrador Aura</span>
+            <span class="user-role">Acceso Total</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= NAVIGATION TABS ================= -->
+  <nav class="aura-nav">
+    <div class="nav-container">
+      <button class="nav-tab active" data-tab="todos">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        Todos los Documentos
+      </button>
+      <button class="nav-tab" data-tab="laborales">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Documentos Laborales
+      </button>
+      <button class="nav-tab" data-tab="administrativos">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        Documentos Administrativos
+      </button>
+      <button class="nav-tab" data-tab="vencimientos">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        Vencimientos y Renovaciones
+        <span class="badge-count danger" id="badgeVencimientos">0</span>
+      </button>
+      <button class="nav-tab" data-tab="historial">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+        Historial de Acceso y Auditoría
+      </button>
+    </div>
+  </nav>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="aura-main">
+    
+    <!-- STATS OVERVIEW CARDS -->
+    <section class="stats-grid">
+      <div class="stat-card red">
+        <div class="stat-icon red">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Documentos Almacenados</span>
+          <span class="stat-val" id="statTotalDocs">0</span>
+          <span class="stat-sub">100% clasificados en repositorio</span>
+        </div>
+      </div>
+
+      <div class="stat-card blue">
+        <div class="stat-icon blue">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Documentos Laborales</span>
+          <span class="stat-val" id="statLaborales">0</span>
+          <span class="stat-sub">Contratos, boletas y legajos</span>
+        </div>
+      </div>
+
+      <div class="stat-card purple">
+        <div class="stat-icon purple">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Doc. Administrativos</span>
+          <span class="stat-val" id="statAdmin">0</span>
+          <span class="stat-sub">Pólizas, licencias y convenios</span>
+        </div>
+      </div>
+
+      <div class="stat-card amber">
+        <div class="stat-icon amber">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Vencimientos Activos</span>
+          <span class="stat-val" id="statVencimientos">0</span>
+          <span class="stat-sub">Requieren renovación o seguimiento</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- DYNAMIC VIEW CONTAINER -->
+    <div id="viewContainer">
+      <!-- Inyectado por app.js -->
+    </div>
+
+  </main>
+
+  <!-- ================= MODAL: SUBIR / REGISTRAR DOCUMENTO ================= -->
+  <div class="modal-overlay" id="uploadModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+          Almacenar y Clasificar Documento
+        </h3>
+        <button class="close-modal-btn" id="btnCloseUploadModal">&times;</button>
+      </div>
+
+      <form id="uploadDocForm">
+        <div class="modal-body">
+          
+          <div class="dropzone" id="fileDropzone">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <p>Arrastra tu archivo aquí o haz clic para seleccionar</p>
+            <span>Soporta PDF, Word (.docx), Excel (.xlsx) y archivos comprimidos (.zip)</span>
+          </div>
+
+          <div class="form-group">
+            <label>Título oficial del documento *</label>
+            <input type="text" id="newDocTitle" class="form-control" placeholder="Ej: Contrato de Trabajo Indeterminado 2026" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Clasificación del documento *</label>
+              <select id="newDocCategory" class="form-control" required>
+                <option value="laborales">Documento Laboral (RRHH / Nóminas)</option>
+                <option value="administrativos">Documento Administrativo (Legal / Pólizas / Licencias)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Área o Departamento *</label>
+              <input type="text" id="newDocDept" class="form-control" placeholder="Ej: Recursos Humanos, Legal, SST" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Colaborador / Entidad Relacionada</label>
+              <input type="text" id="newDocEmp" class="form-control" placeholder="Ej: Carlos Mendoza Quispe o Rímac Seguros" />
+            </div>
+            <div class="form-group">
+              <label>Nivel de Permisos y Acceso *</label>
+              <select id="newDocAccess" class="form-control" required>
+                <option value="confidencial">Confidencial (Solo Gerencia / RRHH)</option>
+                <option value="restringido">Restringido (Jefaturas y Auditoría)</option>
+                <option value="publico">Público Interno (Todos los Colaboradores)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Fecha de Vencimiento (Dejar en blanco si es permanente)</label>
+              <input type="date" id="newDocExpDate" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>Versión Inicial</label>
+              <input type="text" class="form-control" value="v1.0" readonly style="opacity: 0.7;" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Notas de control de versiones y auditoría</label>
+            <textarea id="newDocNotes" class="form-control" rows="2" placeholder="Describa el contenido, adenda, o detalles clave de este registro..."></textarea>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="btnCancelUpload">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar y Clasificar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: VERSIONES DEL DOCUMENTO ================= -->
+  <div class="modal-overlay" id="versionModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 id="versionModalTitle">Versiones del Documento</h3>
+        <button class="close-modal-btn" id="btnCloseVersionModal">&times;</button>
+      </div>
+      <div class="modal-body" id="versionModalBody">
+        <!-- Contenido generado dinámicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: GESTIONAR PERMISOS ================= -->
+  <div class="modal-overlay" id="permModal">
+    <div class="modal-container" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Permisos y Control de Acceso
+        </h3>
+        <button class="close-modal-btn" id="btnClosePermModal">&times;</button>
+      </div>
+      <form id="permDocForm">
+        <div class="modal-body">
+          <input type="hidden" id="permDocId" />
+          <p style="font-size: 0.88rem; color: #fff; margin-bottom: 0.5rem;" id="permDocTitle"></p>
+          <div class="form-group">
+            <label>Seleccionar Nivel de Acceso y Visibilidad:</label>
+            <select id="permSelectLevel" class="form-control">
+              <option value="confidencial">Confidencial (Solo Gerencia General y RRHH)</option>
+              <option value="restringido">Restringido (Jefes de Área y Auditores)</option>
+              <option value="publico">Público Interno (Acceso a todos los colaboradores)</option>
+            </select>
+          </div>
+          <div style="font-size: 0.78rem; color: var(--color-text-muted); background: #0c1c2e; padding: 0.75rem; border-radius: 8px; border-left: 3px solid var(--color-primary);">
+            Los cambios de permisos quedan registrados de forma inmutable en el historial de trazabilidad de Aura con dirección IP y timestamp del usuario.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn-primary">Guardar Cambios de Seguridad</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: RENOVAR DOCUMENTO ================= -->
+  <div class="modal-overlay" id="renewModal">
+    <div class="modal-container" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+          Renovación de Documento
+        </h3>
+        <button class="close-modal-btn" id="btnCloseRenewModal">&times;</button>
+      </div>
+      <form id="renewDocForm">
+        <div class="modal-body">
+          <input type="hidden" id="renewDocId" />
+          <p style="font-weight: 700; color: #fff; font-size: 0.92rem;" id="renewDocTitle"></p>
+          <div style="font-size: 0.8rem; color: var(--color-text-muted);">
+            Vencimiento actual: <span id="renewCurrentExp" style="color: var(--color-danger); font-weight: 700;"></span>
+          </div>
+
+          <div class="form-group" style="margin-top: 1rem;">
+            <label>Nueva Fecha de Vencimiento / Vigencia *</label>
+            <input type="date" id="renewNewDate" class="form-control" required />
+          </div>
+
+          <div class="form-group">
+            <label>Detalle de la Renovación (Adenda / Póliza / Resolución)</label>
+            <textarea id="renewNotes" class="form-control" rows="3" placeholder="Ej: Renovación anual de póliza Rímac SCTR aprobada con cotización #8849..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn-primary">Aprobar y Registrar Renovación</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Contenedor de notificaciones flotantes -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
